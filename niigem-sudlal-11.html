@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Нийгэм судлал 11</title>
+<style>
+  @media (prefers-color-scheme: light) {
+    html { background: #0d1117 !important; }
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap');
+
+  :root {
+    --blue: #4fc3f7;
+    --blue-bright: #81d4fa;
+    --blue-glow: rgba(79, 195, 247, 0.35);
+    --blue-dim: rgba(79, 195, 247, 0.12);
+    --bg: #0d1117;
+    --card: #161b27;
+    --card2: #1c2333;
+    --border: rgba(79, 195, 247, 0.15);
+    --text: #cdd9e5;
+    --muted: #546e7a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    color-scheme: dark;
+    background: #0d1117;
+  }
+
+  body {
+    font-family: 'Exo 2', 'Segoe UI', sans-serif;
+    background: #0d1117 !important;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 50px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* subtle grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  .header {
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(12px);
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--blue-bright);
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 18px var(--blue-glow);
+  }
+  .header-done {
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+  .header-menu { color: var(--blue); font-size: 20px; cursor: pointer; }
+
+  /* Search */
+  .search-wrap { padding: 16px 16px 8px; position: relative; z-index: 1; }
+  .search-box {
+    background: var(--card);
+    border: 1.5px solid var(--blue);
+    border-radius: 30px;
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 16px var(--blue-glow);
+  }
+  .search-box input {
+    background: none; border: none; outline: none;
+    color: var(--blue-bright); font-size: 14px; flex: 1;
+    font-family: inherit; font-weight: 500;
+  }
+  .search-box input::placeholder { color: var(--muted); }
+  .search-icon { font-size: 15px; color: var(--blue); }
+
+  /* Filter chips */
+  .filters {
+    padding: 8px 16px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: relative; z-index: 1;
+  }
+  .chip {
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    transition: all 0.2s;
+    color: var(--muted);
+    background: var(--card);
+    letter-spacing: 0.3px;
+  }
+  .chip:hover { border-color: var(--blue); color: var(--blue); }
+  .chip.active {
+    background: var(--blue-dim);
+    border-color: var(--blue);
+    color: var(--blue-bright);
+    box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .chip.all.active {
+    background: var(--blue);
+    color: #0d1117;
+    font-weight: 800;
+  }
+
+  /* Section label */
+  .section-wrap { position: relative; z-index: 1; }
+  .section-label {
+    padding: 20px 18px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* Topic cards */
+  .topics { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+
+  .topic-section {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .topic-section:hover {
+    border-color: rgba(79,195,247,0.35);
+    box-shadow: 0 0 20px rgba(79,195,247,0.08);
+  }
+  .topic-header {
+    padding: 15px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .topic-left { display: flex; align-items: center; gap: 11px; flex: 1; }
+  .topic-emoji { font-size: 22px; }
+  .topic-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue-bright);
+    text-shadow: 0 0 10px rgba(79,195,247,0.2);
+  }
+  .topic-right { display: flex; align-items: center; gap: 8px; }
+
+  .badge {
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .badge-niigem { background: rgba(79,195,247,0.12); color: #4fc3f7; border: 1px solid rgba(79,195,247,0.3); }
+  .badge-econ   { background: rgba(100,181,246,0.12); color: #64b5f6; border: 1px solid rgba(100,181,246,0.3); }
+
+  .arrow {
+    color: var(--blue);
+    font-size: 11px;
+    transition: transform 0.3s;
+    opacity: 0.7;
+  }
+  .arrow.open { transform: rotate(180deg); opacity: 1; }
+
+  /* Subtopic list */
+  .subtopics {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+  .subtopics.open { display: block; }
+  .subtopic-item {
+    padding: 12px 16px 12px 50px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .subtopic-item:last-child { border-bottom: none; }
+  .subtopic-item:hover { background: rgba(79,195,247,0.04); }
+
+  .subtopic-num {
+    background: var(--blue-dim);
+    color: var(--blue);
+    border: 1px solid rgba(79,195,247,0.3);
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .subtopic-text { flex: 1; }
+  .subtopic-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--blue-bright); margin-bottom: 4px;
+  }
+  .subtopic-desc { font-size: 12px; color: #607d8b; line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-menu">☰</span>
+  <span class="header-title">📘 НИЙГЭМ СУДЛАЛ 11</span>
+  <span class="header-done">Done</span>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Сэдэв хайх..." id="searchInput" oninput="applyFilters()">
+  </div>
+</div>
+
+<div class="filters">
+  <div class="chip all active" onclick="filterBy('all', this)">Бүгд</div>
+  <div class="chip" data-filter="niigem" onclick="filterBy('niigem', this)">🤝 Нийгэм</div>
+  <div class="chip" data-filter="econ" onclick="filterBy('econ', this)">💰 Эдийн засаг</div>
+</div>
+
+<!-- ===== НИЙГЭМ ===== -->
+<div class="section-wrap" data-group="niigem">
+  <div class="section-label">🤝 Нийгэм ба нийгмийн харилцаа</div>
+  <div class="topics">
+
+    <div class="topic-section" data-group="niigem">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">🏛️</span>
+          <span class="topic-title">Нийгэм гэж юу вэ?</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-niigem">Нийгэм</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн тодорхойлолт ба шинж чанар</div>
+            <div class="subtopic-desc">Нийгэм бол хүмүүсийн хамтын амьдралын нийлбэр цогц. Үндсэн шинж: байнгын харилцаа, хамтын зорилго, нийтлэг соёл.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн бүтэц ба элементүүд</div>
+            <div class="subtopic-desc">Нийгэм нь гэр бүл, боловсрол, эдийн засаг, улс төр, шашин гэсэн үндсэн институциудаас бүрддэг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгэм ба хувь хүн</div>
+            <div class="subtopic-desc">Хувь хүн нийгмийн нөлөөгөөр хөгжиж, нийгэмд нөлөөлдөг хоёр талын харилцаа оршдог.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="niigem">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">🔗</span>
+          <span class="topic-title">Нийгмийн харилцаа</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-niigem">Нийгэм</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн харилцааны төрлүүд</div>
+            <div class="subtopic-desc">Хамтын ажиллагаа, өрсөлдөөн, зөрчил, дасан зохицол — нийгмийн харилцааны 4 үндсэн хэлбэр.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн нормууд ба дүрэм</div>
+            <div class="subtopic-desc">Нийгмийн нормууд бол хүмүүсийн зан үйлийг чиглүүлдэг бичигдсэн болон бичигдээгүй дүрэм журам.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн хяналт</div>
+            <div class="subtopic-desc">Хууль, ёс заншил, шашны хэм хэмжээ нь нийгмийн дэг журмыг хадгалах хяналтын механизм болдог.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="niigem">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">📊</span>
+          <span class="topic-title">Нийгмийн давхраажилт</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-niigem">Нийгэм</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Давхраажилтын мөн чанар</div>
+            <div class="subtopic-desc">Нийгмийн давхраажилт нь гишүүдийг баялаг, эрх мэдэл, нэр хүндийн дагуу ялгах үйл явц.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн анги, давхарга</div>
+            <div class="subtopic-desc">Дээд, дунд, доод анги — тус бүр нь орлого, боловсрол, мэргэжлийн байдлаар тодорхойлогддог.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн хөдөлгөөн</div>
+            <div class="subtopic-desc">Нийгмийн босоо ба хэвтээ хөдөлгөөн. Боловсрол, ажил мэргэжил нь нийгмийн байр суурийг өөрчлөх гол хүчин зүйл.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="niigem">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">👨‍👩‍👧‍👦</span>
+          <span class="topic-title">Нийгмийн институцүүд</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-niigem">Нийгэм</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Гэр бүл — анхдагч институц</div>
+            <div class="subtopic-desc">Гэр бүл нь нийгмийн хамгийн жижиг нэгж бөгөөд хүүхдийн нийгэмшилд гол үүрэг гүйцэтгэдэг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Боловсролын институц</div>
+            <div class="subtopic-desc">Сургууль нь мэдлэг дамжуулах, иргэний соёл төлөвшүүлэх, нийгмийн хөдөлгөөнийг дэмжих гол хүч.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Улс төрийн институц</div>
+            <div class="subtopic-desc">Засгийн газар, парламент, шүүх зэрэг байгууллагууд нийгмийн захиргааг хариуцдаг.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="niigem">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">⚡</span>
+          <span class="topic-title">Нийгмийн өөрчлөлт ба хөгжил</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-niigem">Нийгэм</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн өөрчлөлтийн хүчин зүйлүүд</div>
+            <div class="subtopic-desc">Технологийн дэвшил, хүн амын өсөлт, соёлын харилцан нөлөөлөл, байгалийн өөрчлөлт нийгмийг хувиргадаг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Глобалчлал ба нийгэм</div>
+            <div class="subtopic-desc">Дэлхийн харилцан хамаарал нэмэгдэж буй нь соёл, эдийн засаг, улс төрийн шинэ сорилт бий болгодог.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийгмийн хямрал ба шийдэл</div>
+            <div class="subtopic-desc">Ядуурал, ялгаварлан гадуурхал, авлига зэрэг нийгмийн асуудлуудыг шийдэх арга зам, бодлого.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== ЭДИЙН ЗАСАГ ===== -->
+<div class="section-wrap" data-group="econ">
+  <div class="section-label">💰 Эдийн засаг</div>
+  <div class="topics">
+
+    <div class="topic-section" data-group="econ">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">📈</span>
+          <span class="topic-title">Эдийн засгийн үндэс</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-econ">Эдийн засаг</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Эдийн засаг гэж юу вэ?</div>
+            <div class="subtopic-desc">Эдийн засаг бол хомс нөөцийг хүмүүсийн хэрэгцээг хангахад хэрхэн хувиарлах тухай шинжлэх ухаан.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Үйлдвэрлэл, хэрэглээ, хуваарилалт</div>
+            <div class="subtopic-desc">Эдийн засгийн гурван үндсэн үйл явц: бараа бүтээгдэхүүн үйлдвэрлэх, хуваарилах, хэрэглэх.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Эдийн засгийн 3 үндсэн асуулт</div>
+            <div class="subtopic-desc">Юу үйлдвэрлэх? Хэрхэн үйлдвэрлэх? Хэний тулд үйлдвэрлэх? — эдийн засгийн суурь шийдвэрлэх асуудлууд.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="econ">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">⚖️</span>
+          <span class="topic-title">Эрэлт ба нийлүүлэлт</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-econ">Эдийн засаг</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Эрэлтийн хууль</div>
+            <div class="subtopic-desc">Үнэ өсөхөд эрэлт буурдаг, үнэ буурахад эрэлт нэмэгддэг — эрэлтийн урвуу хамаарал.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Нийлүүлэлтийн хууль</div>
+            <div class="subtopic-desc">Үнэ өсөхөд нийлүүлэлт нэмэгддэг — нийлүүлэгчид илүү ашгийн боломжийг ашиглахыг эрмэлздэг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Зах зээлийн тэнцвэр</div>
+            <div class="subtopic-desc">Эрэлт нийлүүлэлт тэнцсэн үед тэнцвэрийн үнэ ба тоо хэмжээ тогтдог — зах зээлийн гол механизм.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="econ">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">🏭</span>
+          <span class="topic-title">Зах зээлийн эдийн засаг</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-econ">Эдийн засаг</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Зах зээлийн эдийн засгийн шинж</div>
+            <div class="subtopic-desc">Хувийн өмч, чөлөөт өрсөлдөөн, үнийн механизм — зах зээлийн эдийн засгийн 3 үндсэн зарчим.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Монополь ба өрсөлдөөн</div>
+            <div class="subtopic-desc">Нэг компани зах зээлийг захирах монополь нь үнийг өсгөж, чанарыг буурах хандлагатай байдаг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Засгийн газрын үүрэг</div>
+            <div class="subtopic-desc">Зах зээлийн дутагдлыг нөхөх, нийгмийн тэгш байдлыг хангах, дэд бүтцийг хөгжүүлэх нь төрийн үүрэг.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="econ">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">💵</span>
+          <span class="topic-title">Мөнгө ба банкны систем</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-econ">Эдийн засаг</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Мөнгөний үүрэг ба шинж</div>
+            <div class="subtopic-desc">Мөнгө — солилцооны хэрэгсэл, үнийн хэмжүүр, хуримтлалын хадгалах хэлбэр. Аливаа нийгмийн зайлшгүй хэрэгсэл.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Банкны систем ба зээл</div>
+            <div class="subtopic-desc">Арилжааны банкууд хадгаламж цуглуулж, зээлдүүлэн эдийн засгийн хөрөнгийг эргүүлэн ашиглуулдаг.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Инфляци ба дефляци</div>
+            <div class="subtopic-desc">Инфляци — үнийн ерөнхий түвшин өсөх, мөнгөний худалдан авах чадвар буурах үзэгдэл. Дефляцитай харьцуулна.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-section" data-group="econ">
+      <div class="topic-header" onclick="toggle(this)">
+        <div class="topic-left">
+          <span class="topic-emoji">🌍</span>
+          <span class="topic-title">Дэлхийн эдийн засаг</span>
+        </div>
+        <div class="topic-right">
+          <span class="badge badge-econ">Эдийн засаг</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="subtopics">
+        <div class="subtopic-item">
+          <div class="subtopic-num">1</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Олон улсын худалдаа</div>
+            <div class="subtopic-desc">Харьцангуй давуу талын онол — улс орон бүр харьцангуй хямдаар үйлдвэрлэх бараандаа мэргэшин экспортлох нь ашигтай.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">2</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Дэлхийн санхүүгийн байгууллагууд</div>
+            <div class="subtopic-desc">ДБСБ, IMF, WTO — дэлхийн эдийн засгийг зохицуулах, хөгжиж буй орнуудад дэмжлэг үзүүлэх гол байгууллагууд.</div>
+          </div>
+        </div>
+        <div class="subtopic-item">
+          <div class="subtopic-num">3</div>
+          <div class="subtopic-text">
+            <div class="subtopic-title">Монголын эдийн засгийн онцлог</div>
+            <div class="subtopic-desc">Уул уурхайд тулгуурласан эдийн засаг, нүүдлийн мал аж ахуй, гадаадын хөрөнгө оруулалтын нөлөө, эдийн засгийн төрөлжилтийн шаардлага.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggle(header) {
+  const sub = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  const open = sub.classList.contains('open');
+  sub.classList.toggle('open', !open);
+  arrow.classList.toggle('open', !open);
+}
+
+let current = 'all';
+
+function filterBy(val, el) {
+  current = val;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.section-wrap').forEach(wrap => {
+    const g = wrap.dataset.group;
+    const groupMatch = current === 'all' || current === g;
+    let anyVisible = false;
+    wrap.querySelectorAll('.topic-section').forEach(sec => {
+      const textMatch = !q || sec.innerText.toLowerCase().includes(q);
+      const show = groupMatch && textMatch;
+      sec.style.display = show ? '' : 'none';
+      if (show) anyVisible = true;
+    });
+    wrap.style.display = anyVisible ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
